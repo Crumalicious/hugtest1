@@ -1,5 +1,5 @@
 # HugTest1
-A Flask-based web application for text and image generation using AI models.
+A Flask-based web application for text generation using AI models.
 
 ## Features
 - Text generation with GPT models
