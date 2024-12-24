@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Generator</title>
+    <style>
+        body {
+            background-image: url('/static/lost_deit.png');
+
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1, h2 {
+            color: white;
+            text-shadow: 2px 2px 4px black;
+        }
+        form {
+            margin-top: 20px;
+            text-align: center;
+        }
+        input, select {
+            padding: 10px;
+            margin: 5px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: rgba(50, 50, 50, 0.7);
+        }
+        p {
+            font-size: 16px;
+            text-shadow: 1px 1px 2px black;
+        }
+    </style>
+</head>
+<body>
+    <h1>Text Generator</h1>
+    <form id="text-generator-form">
+        <label for="prompt">Enter a prompt:</label><br>
+        <input type="text" id="prompt" name="prompt" placeholder="Type your prompt here..." required><br>
+
+        <label for="max_length">Max Length:</label>
+        <input type="number" id="max_length" name="max_length" value="50" min="10" max="500"><br>
+
+        <label for="temperature">Temperature:</label>
+        <input type="number" id="temperature" name="temperature" step="0.1" value="1.0" min="0.5" max="2.0"><br>
+
+        <label for="top_k">Top-k:</label>
+        <input type="number" id="top_k" name="top_k" value="50" min="0"><br>
+
+        <label for="top_p">Top-p:</label>
+        <input type="number" id="top_p" name="top_p" step="0.1" value="1.0" min="0.1" max="1.0"><br>
+
+        <button type="submit">Generate Text</button>
+    </form>
+    <h2>Generated Text:</h2>
+    <p id="output"></p>
+    <script>
+        const form = document.getElementById('text-generator-form');
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const prompt = document.getElementById('prompt').value;
+            const maxLength = document.getElementById('max_length').value;
+            const temperature = document.getElementById('temperature').value;
+            const topK = document.getElementById('top_k').value;
+            const topP = document.getElementById('top_p').value;
+
+            const response = await fetch('/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    prompt,
+                    max_length: parseInt(maxLength),
+                    temperature: parseFloat(temperature),
+                    top_k: parseInt(topK),
+                    top_p: parseFloat(topP)
+                }),
+            });
+
+            const data = await response.json();
+            const outputElement = document.getElementById('output');
+            outputElement.innerText = data.generated_text || data.error;
+        });
+    </script>
+</body>
+</html>
